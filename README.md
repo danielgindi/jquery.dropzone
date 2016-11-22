@@ -8,12 +8,13 @@ A simple jquery plugin for creating styleable dropzones for files
 ---
 
 It's possible to instruct it to add an extra element inside the dropzone when a file is being dragged to the window, 
-which will also receive the `drop-over` class.
+which will also receive the `drop-over` class. 
+This is useful for creating a dropzone on `body`, and having a styled dropzone element float above everything else.
 
 This is done by passing an `append` option:
 
 ```
-$('#your-element').dropzone({ append: 'dropzone-inner' })
+$('body').dropzone({ append: 'dropzone-inner' })
 ```
 
 Now just listen to 'drop' event and take the file:
