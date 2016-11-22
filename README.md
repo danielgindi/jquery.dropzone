@@ -14,13 +14,13 @@ This is useful for creating a dropzone on `body`, and having a styled dropzone e
 This is done by passing an `append` option:
 
 ```
-$('body').dropzone({ append: 'dropzone-inner' })
+$('body').dropzone({ append: '<div class="dropzone-inner">' })
 ```
 
 Now just listen to 'drop' event and take the file:
 ```
 $('body')
-    .dropzone({ append: 'dropzone-inner' })
+    .dropzone({ append: '<div class="dropzone-inner">' })
     .on('drop', function (event) {
         event.preventDefault();
 
