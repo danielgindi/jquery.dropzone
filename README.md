@@ -19,7 +19,7 @@ $('body').dropzone({ append: 'dropzone-inner' })
 
 Now just listen to 'drop' event and take the file:
 ```
-$('#your-element')
+$('body')
     .dropzone({ append: 'dropzone-inner' })
     .on('drop', function (event) {
         event.preventDefault();
