@@ -2,11 +2,27 @@
 
 import $ from 'jquery';
 
+/**
+ * @typedef {Object} DropZone.Options
+ * @property {String|jQuery|undefined|null} [append=null] - jQuery expression/element to append to the dropzone
+ */
+
+/** @type {DropZone.Options} */
+var defaultOptions = {
+    append: null
+};
+
+/**
+ * @constructor
+ * @param {Element} el
+ * @param {DropZone.Options} options
+ */
 var DropZone = function (el, options) {
 
     var that = this;
-    
-    that.options = options;
+
+    /** @type {DropZone.Options} */
+    that.options = $.extend({}, defaultOptions, options);
 
     var globalDragCounter = 0,
         innerDragCounter = 0;
@@ -168,6 +184,11 @@ DropZone.prototype.destroy = function () {
     this.options = null;
 };
 
+/**
+ *
+ * @param {DropZone.Options|String} options - Options for constructing the DropZone, or name of function to call
+ * @returns {$}
+ */
 $.fn.dropzone = function (options) {
     var args = arguments;
 
@@ -197,7 +218,15 @@ $.fn.dropzone = function (options) {
             return;
         }
 
-        options = $.extend({}, options || {});
+        if (obj) {
+            try {
+                obj.destroy();
+            } catch (e) {
+
+            }
+        }
+
+        options = /** @type {DropZone.Options} */ $.extend({}, options || {});
         obj = new DropZone(this, options);
         $this.data('dropzone', obj);
     });
@@ -206,3 +235,5 @@ $.fn.dropzone = function (options) {
         ? (returnValues.length === 1 ? returnValues[0] : returnValues)
         : this;
 };
+
+export default DropZone
