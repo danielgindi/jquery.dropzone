@@ -4,6 +4,7 @@ module.exports = function( grunt ) {
     grunt.loadNpmTasks( 'grunt-webpack' );
     grunt.loadNpmTasks( 'grunt-contrib-uglify' );
     grunt.loadNpmTasks( 'grunt-header' );
+    grunt.loadNpmTasks( 'grunt-replace' );
 
     /*var applyTemplate = function (template, options) {
         return template.replace(/<%=\s*(.*?)\s*%>/g, function (match, name) {
@@ -67,6 +68,22 @@ module.exports = function( grunt ) {
             }
         }
 
+        , replace: {
+            dist: {
+                options: {
+                    patterns: [
+                        {
+                            match: /return __webpack_require__\(0\)/g,
+                            replacement: 'return __webpack_require__(0).default'
+                        }
+                    ]
+                },
+                files: [
+                    { expand: true, flatten: true, src: ['dist/jquery.dropzone.js'], dest: 'dist/'}
+                ]
+            }
+        }
+
         , uglify: {
             dist: {
                 files: {
@@ -88,7 +105,7 @@ module.exports = function( grunt ) {
         }
     });
     
-    grunt.registerTask( 'build', [ 'webpack', 'uglify', 'header' ] );
+    grunt.registerTask( 'build', [ 'webpack', 'replace', 'uglify', 'header' ] );
     grunt.registerTask( 'default', [ 'build' ] );
 
 };
