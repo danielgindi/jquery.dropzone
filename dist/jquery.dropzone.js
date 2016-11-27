@@ -1,5 +1,5 @@
 /*!
- * jquery.dropzone 1.0.2
+ * jquery.dropzone 1.0.3
  * git://github.com/danielgindi/jquery.dropzone.git
  */
 
@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
+/******/ 	return __webpack_require__(0).default;
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,6 +70,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _jquery2 = _interopRequireDefault(_jquery);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var $ = _jquery2['default'];
 
 	/**
 	 * @typedef {Object} DropZone.Options
@@ -91,13 +93,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var that = this;
 
 	    /** @type {DropZone.Options} */
-	    that.options = _jquery2['default'].extend({}, defaultOptions, options);
+	    that.options = $.extend({}, defaultOptions, options);
 
 	    var globalDragCounter = 0,
 	        innerDragCounter = 0;
 
-	    var $dropZone = that.$el = (0, _jquery2['default'])(el);
-	    var $dropZoneAppend = options.append ? (0, _jquery2['default'])(options.append) : null;
+	    var $dropZone = that.$el = $(el);
+	    var $dropZoneAppend = options.append ? $(options.append) : null;
 
 	    // For jQuery.UI or jquery.removeevent
 	    that.$el.on('remove', function () {
@@ -199,7 +201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, 0);
 	    };
 
-	    (0, _jquery2['default'])(window).on('dragover', allowGlobalDrag).on('dragenter', startGlobalDrag).on('dragleave', endGlobalDrag).on('drop', globalDrop);
+	    $(window).on('dragover', allowGlobalDrag).on('dragenter', startGlobalDrag).on('dragleave', endGlobalDrag).on('drop', globalDrop);
 
 	    $dropZone.data('global-dropzone', {
 	        allowGlobalDrag: allowGlobalDrag,
@@ -217,7 +219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var dropData = $dropZone.data('global-dropzone');
 
 	    if (dropData) {
-	        (0, _jquery2['default'])(window).off('dragover', dropData.allowGlobalDrag).off('dragenter', dropData.startGlobalDrag).off('dragleave', dropData.endGlobalDrag).off('drop', dropData.globalDrop);
+	        $(window).off('dragover', dropData.allowGlobalDrag).off('dragenter', dropData.startGlobalDrag).off('dragleave', dropData.endGlobalDrag).off('drop', dropData.globalDrop);
 	        dropData.endGlobalDrag();
 	        $dropZone.removeData('global-dropzone');
 	    }
@@ -234,13 +236,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {DropZone.Options|String} options - Options for constructing the DropZone, or name of function to call
 	 * @returns {$}
 	 */
-	_jquery2['default'].fn.dropzone = function (options) {
+	$.fn.dropzone = function (options) {
 	    var args = arguments;
 
 	    var returnValues;
 
 	    this.each(function (eachIndex) {
-	        var $this = (0, _jquery2['default'])(this),
+	        var $this = $(this),
 	            obj = $this.data('dropzone');
 
 	        if (typeof args[0] === 'string') {
@@ -269,7 +271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } catch (e) {}
 	        }
 
-	        options = /** @type {DropZone.Options} */_jquery2['default'].extend({}, options || {});
+	        options = /** @type {DropZone.Options} */$.extend({}, options || {});
 	        obj = new DropZone(this, options);
 	        $this.data('dropzone', obj);
 	    });
