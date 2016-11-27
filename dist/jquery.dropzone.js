@@ -1,5 +1,5 @@
 /*!
- * jquery.dropzone 1.0.1
+ * jquery.dropzone 1.0.2
  * git://github.com/danielgindi/jquery.dropzone.git
  */
 
@@ -61,17 +61,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
 	var _jquery = __webpack_require__(1);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+	/**
+	 * @typedef {Object} DropZone.Options
+	 * @property {String|jQuery|undefined|null} [append=null] - jQuery expression/element to append to the dropzone
+	 */
+
+	/** @type {DropZone.Options} */
+	var defaultOptions = {
+	    append: null
+	};
+
+	/**
+	 * @constructor
+	 * @param {Element} el
+	 * @param {DropZone.Options} options
+	 */
 	var DropZone = function DropZone(el, options) {
 
 	    var that = this;
 
-	    that.options = options;
+	    /** @type {DropZone.Options} */
+	    that.options = _jquery2['default'].extend({}, defaultOptions, options);
 
 	    var globalDragCounter = 0,
 	        innerDragCounter = 0;
@@ -209,6 +229,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.options = null;
 	};
 
+	/**
+	 *
+	 * @param {DropZone.Options|String} options - Options for constructing the DropZone, or name of function to call
+	 * @returns {$}
+	 */
 	_jquery2['default'].fn.dropzone = function (options) {
 	    var args = arguments;
 
@@ -238,13 +263,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 
-	        options = _jquery2['default'].extend({}, options || {});
+	        if (obj) {
+	            try {
+	                obj.destroy();
+	            } catch (e) {}
+	        }
+
+	        options = /** @type {DropZone.Options} */_jquery2['default'].extend({}, options || {});
 	        obj = new DropZone(this, options);
 	        $this.data('dropzone', obj);
 	    });
 
 	    return returnValues ? returnValues.length === 1 ? returnValues[0] : returnValues : this;
 	};
+
+	exports['default'] = DropZone;
 
 /***/ },
 /* 1 */
