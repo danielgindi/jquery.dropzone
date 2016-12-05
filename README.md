@@ -22,7 +22,15 @@ $('body').dropzone({ append: '<div class="dropzone-inner">' })
 Now just listen to 'drop' event and take the file:
 ```javascript
 $('body')
-    .dropzone({ append: '<div class="full-drop-zone"><div class="description-wrapper"><div class="description">Release the file here...</div></div></div>' })
+    .dropzone({
+        // This is optional, to add an internal element that you can style
+        append: '<div class="full-drop-zone"><div class="description-wrapper"><div class="description">Release the file here...</div></div></div>',
+        
+        // This is optional, to selectively allow dropping
+        allowDrop: function (event) {
+            return dataTransfer.items.length > 0 && dataTransfer.items[0].kind === 'file';
+        }
+    })
     .on('drop', function (event) {
         event.preventDefault();
 

@@ -5,11 +5,12 @@ import jQuery from 'jquery';
 const $ = jQuery;
 
 /**
- * @typedef {Object} DropZone.Options
+ * @typedef {Object} DropZone~Options
  * @property {String|jQuery|undefined|null} [append=null] - jQuery expression/element to append to the dropzone
+ * @property {function(dataTransfer):Boolean} [allowDrop] - A function that determines whether we allow dropping or not
  */
 
-/** @type {DropZone.Options} */
+/** @type {DropZone~Options} */
 var defaultOptions = {
     append: null
 };
@@ -17,13 +18,13 @@ var defaultOptions = {
 /**
  * @constructor
  * @param {Element} el
- * @param {DropZone.Options} options
+ * @param {DropZone~Options} options
  */
 var DropZone = function (el, options) {
 
     var that = this;
 
-    /** @type {DropZone.Options} */
+    /** @type {DropZone~Options} */
     that.options = $.extend({}, defaultOptions, options);
 
     var globalDragCounter = 0,
@@ -38,12 +39,21 @@ var DropZone = function (el, options) {
     });
 
     var innerDragOver = function (event) {
-
+        
+        if (typeof options.allowDrop === 'function' 
+            && !options.allowDrop(event.originalEvent.dataTransfer)) return;
+            
         event.preventDefault();
 
     };
 
     var innerDragEnter = function (event) {
+        
+        if (typeof options.allowDrop === 'function' 
+            && !options.allowDrop(event.originalEvent.dataTransfer)) {
+            event.preventDefault();
+            return;
+        }
 
         if (typeof event !== 'undefined') {
             innerDragCounter++;
@@ -84,6 +94,12 @@ var DropZone = function (el, options) {
     };
 
     var startGlobalDrag = function (event) {
+        
+        if (typeof options.allowDrop === 'function' 
+            && !options.allowDrop(event.originalEvent.dataTransfer)) {
+            event.preventDefault();
+            return;
+        }
 
         if (typeof event !== 'undefined') {
             globalDragCounter++;
@@ -107,6 +123,9 @@ var DropZone = function (el, options) {
     };
 
     var allowGlobalDrag = function (event) {
+        
+        if (typeof options.allowDrop === 'function' 
+            && !options.allowDrop(event.originalEvent.dataTransfer)) return;
 
         event.preventDefault();
 
@@ -188,7 +207,7 @@ DropZone.prototype.destroy = function () {
 
 /**
  *
- * @param {DropZone.Options|String} options - Options for constructing the DropZone, or name of function to call
+ * @param {DropZone~Options|String} options - Options for constructing the DropZone, or name of function to call
  * @returns {$}
  */
 $.fn.dropzone = function (options) {
@@ -228,7 +247,7 @@ $.fn.dropzone = function (options) {
             }
         }
 
-        options = /** @type {DropZone.Options} */ $.extend({}, options || {});
+        options = /** @type {DropZone~Options} */ $.extend({}, options || {});
         obj = new DropZone(this, options);
         $this.data('dropzone', obj);
     });
