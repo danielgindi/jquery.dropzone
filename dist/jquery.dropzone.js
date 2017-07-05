@@ -1,5 +1,5 @@
 /*!
- * jquery.dropzone 1.0.4
+ * jquery.dropzone 1.0.5
  * git://github.com/danielgindi/jquery.dropzone.git
  */
 
@@ -57,7 +57,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -296,13 +296,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports['default'] = DropZone;
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
