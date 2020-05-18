@@ -11,199 +11,184 @@ const $ = jQuery;
  */
 
 /** @type {DropZone~Options} */
-var defaultOptions = {
-    append: null
+let defaultOptions = {
+    append: null,
 };
 
-/**
- * @constructor
- * @param {Element} el
- * @param {DropZone~Options} options
- */
-var DropZone = function (el, options) {
+class DropZone {
+    /**
+     * @param {Element} el
+     * @param {DropZone~Options} options
+     */
+    constructor(el, options) {
+        /** @type {DropZone~Options} */
+        this.options = $.extend({}, defaultOptions, options);
 
-    var that = this;
-
-    /** @type {DropZone~Options} */
-    that.options = $.extend({}, defaultOptions, options);
-
-    var globalDragCounter = 0,
-        innerDragCounter = 0;
-
-    var $dropZone = that.$el = $(el);
-    var $dropZoneAppend = options.append ? $(options.append) : null;
-
-    // For jQuery.UI or jquery.removeevent
-    that.$el.on('remove', function () {
-        that.destroy();
-    });
-
-    var innerDragOver = function (event) {
-        
-        if (typeof options.allowDrop === 'function' 
-            && !options.allowDrop(event.originalEvent.dataTransfer)) return;
-            
-        event.preventDefault();
-
-    };
-
-    var innerDragEnter = function (event) {
-        
-        if (typeof options.allowDrop === 'function' 
-            && !options.allowDrop(event.originalEvent.dataTransfer)) {
-            event.preventDefault();
-            return;
-        }
-
-        if (typeof event !== 'undefined') {
-            innerDragCounter++;
-            if (innerDragCounter !== 1) {
-                return;
-            }
-        }
-
-        $dropZone.addClass('drop-over');
-
-        if ($dropZoneAppend) {
-            $dropZoneAppend.addClass('drop-over');
-        }
-
-    };
-
-    var innerDragLeave = function () {
-
-        if (typeof event !== 'undefined') {
-            innerDragCounter = Math.max(innerDragCounter - 1, 0);
-            if (innerDragCounter > 0) {
-                return;
-            }
-        } else {
+        let globalDragCounter = 0,
             innerDragCounter = 0;
-        }
 
-        $dropZone.removeClass('drop-over');
+        let $dropZone = this.$el = $(el);
+        let $dropZoneAppend = options.append ? $(options.append) : null;
 
-        if ($dropZoneAppend) {
-            $dropZoneAppend.removeClass('drop-over');
-        }
-
-    };
-
-    var innerDragDrop = function () {
-        endGlobalDrag();
-    };
-
-    var startGlobalDrag = function (event) {
+        // For jQuery.UI or jquery.removeevent
+        this.$el.on('remove', () => {
+            this.destroy();
+        });
         
-        if (typeof options.allowDrop === 'function' 
-            && !options.allowDrop(event.originalEvent.dataTransfer)) {
+        let innerDragOver, innerDragEnter, innerDragLeave, innerDragDrop, startGlobalDrag, allowGlobalDrag, endGlobalDrag, globalDrop;
+
+        innerDragOver = function (event) {
+            if (typeof options.allowDrop === 'function' 
+                && !options.allowDrop(event.originalEvent.dataTransfer)) return;
+                
             event.preventDefault();
-            return;
-        }
+        };
 
-        if (typeof event !== 'undefined') {
-            globalDragCounter++;
-            if (globalDragCounter !== 1) {
+        innerDragEnter = function (event) {
+            if (typeof options.allowDrop === 'function' 
+                && !options.allowDrop(event.originalEvent.dataTransfer)) {
+                event.preventDefault();
                 return;
             }
-        }
 
-        $dropZone.addClass('drop-available');
-
-        if ($dropZoneAppend) {
-            $dropZoneAppend.appendTo($dropZone);
-        }
-
-        ($dropZoneAppend || $dropZone)
-            .on('dragover', innerDragOver)
-            .on('dragenter', innerDragEnter)
-            .on('dragleave', innerDragLeave)
-            .on('drop', innerDragDrop);
-
-    };
-
-    var allowGlobalDrag = function (event) {
-        
-        if (typeof options.allowDrop === 'function' 
-            && !options.allowDrop(event.originalEvent.dataTransfer)) return;
-
-        event.preventDefault();
-
-    };
-
-    var endGlobalDrag = function (event) {
-
-        if (typeof event !== 'undefined') {
-            globalDragCounter = Math.max(globalDragCounter - 1, 0);
-            if (globalDragCounter > 0) {
-                return;
+            if (typeof event !== 'undefined') {
+                innerDragCounter++;
+                if (innerDragCounter !== 1) {
+                    return;
+                }
             }
-        } else {
-            globalDragCounter = 0;
-        }
 
-        $dropZone.removeClass('drop-available');
+            $dropZone.addClass('drop-over');
 
-        if ($dropZoneAppend) {
-            $dropZoneAppend.detach();
-        }
+            if ($dropZoneAppend) {
+                $dropZoneAppend.addClass('drop-over');
+            }
+        };
 
-        ($dropZoneAppend || $dropZone)
-            .off('dragover', innerDragOver)
-            .off('dragenter', innerDragEnter)
-            .off('dragleave', innerDragLeave)
-            .off('drop', innerDragDrop);
+        innerDragLeave = function () {
+            if (typeof event !== 'undefined') {
+                innerDragCounter = Math.max(innerDragCounter - 1, 0);
+                if (innerDragCounter > 0) {
+                    return;
+                }
+            } else {
+                innerDragCounter = 0;
+            }
 
-        innerDragLeave();
+            $dropZone.removeClass('drop-over');
 
-    };
+            if ($dropZoneAppend) {
+                $dropZoneAppend.removeClass('drop-over');
+            }
+        };
 
-    var globalDrop = function (event) {
-
-        setTimeout(function () {
+        innerDragDrop = function () {
             endGlobalDrag();
-        }, 0);
+        };
 
-    };
+        startGlobalDrag = function (event) {
+            if (typeof options.allowDrop === 'function' 
+                && !options.allowDrop(event.originalEvent.dataTransfer)) {
+                event.preventDefault();
+                return;
+            }
 
-    $(window)
-        .on('dragover', allowGlobalDrag)
-        .on('dragenter', startGlobalDrag)
-        .on('dragleave', endGlobalDrag)
-        .on('drop', globalDrop);
+            if (typeof event !== 'undefined') {
+                globalDragCounter++;
+                if (globalDragCounter !== 1) {
+                    return;
+                }
+            }
 
-    $dropZone.data('global-dropzone', {
-        allowGlobalDrag: allowGlobalDrag,
-        startGlobalDrag: startGlobalDrag,
-        endGlobalDrag: endGlobalDrag,
-        globalDrop: globalDrop
-    });
+            $dropZone.addClass('drop-available');
 
-};
+            if ($dropZoneAppend) {
+                $dropZoneAppend.appendTo($dropZone);
+            }
 
-DropZone.prototype.destroy = function () {
+            ($dropZoneAppend || $dropZone)
+                .on('dragover', innerDragOver)
+                .on('dragenter', innerDragEnter)
+                .on('dragleave', innerDragLeave)
+                .on('drop', innerDragDrop);
+        };
 
-    if (!this.$el) return;
+        allowGlobalDrag = function (event) {
+            if (typeof options.allowDrop === 'function' 
+                && !options.allowDrop(event.originalEvent.dataTransfer)) return;
 
-    var $dropZone = this.$el;
-    var dropData = $dropZone.data('global-dropzone');
+            event.preventDefault();
+        };
 
-    if (dropData) {
+        endGlobalDrag = function (event) {
+            if (typeof event !== 'undefined') {
+                globalDragCounter = Math.max(globalDragCounter - 1, 0);
+                if (globalDragCounter > 0) {
+                    return;
+                }
+            } else {
+                globalDragCounter = 0;
+            }
+
+            $dropZone.removeClass('drop-available');
+
+            if ($dropZoneAppend) {
+                $dropZoneAppend.detach();
+            }
+
+            ($dropZoneAppend || $dropZone)
+                .off('dragover', innerDragOver)
+                .off('dragenter', innerDragEnter)
+                .off('dragleave', innerDragLeave)
+                .off('drop', innerDragDrop);
+
+            innerDragLeave();
+        };
+
+        globalDrop = function (_event) {
+            setTimeout(() => {
+                endGlobalDrag();
+            }, 0);
+        };
+
         $(window)
-            .off('dragover', dropData.allowGlobalDrag)
-            .off('dragenter', dropData.startGlobalDrag)
-            .off('dragleave', dropData.endGlobalDrag)
-            .off('drop', dropData.globalDrop);
-        dropData.endGlobalDrag();
-        $dropZone.removeData('global-dropzone');
+            .on('dragover', allowGlobalDrag)
+            .on('dragenter', startGlobalDrag)
+            .on('dragleave', endGlobalDrag)
+            .on('drop', globalDrop);
+
+        $dropZone.data('global-dropzone', {
+            allowGlobalDrag: allowGlobalDrag,
+            startGlobalDrag: startGlobalDrag,
+            endGlobalDrag: endGlobalDrag,
+            globalDrop: globalDrop,
+        });
     }
 
-    if ($dropZone.data('dropzone') == this) {
-        $dropZone.removeData('dropzone');
-    }
+    destroy() {
 
-    this.options = null;
-};
+        if (!this.$el) return;
+
+        let $dropZone = this.$el;
+        let dropData = $dropZone.data('global-dropzone');
+
+        if (dropData) {
+            $(window)
+                .off('dragover', dropData.allowGlobalDrag)
+                .off('dragenter', dropData.startGlobalDrag)
+                .off('dragleave', dropData.endGlobalDrag)
+                .off('drop', dropData.globalDrop);
+            dropData.endGlobalDrag();
+            $dropZone.removeData('global-dropzone');
+        }
+
+        if ($dropZone.data('dropzone') == this) {
+            $dropZone.removeData('dropzone');
+        }
+
+        this.options = null;
+    }
+}
 
 /**
  *
@@ -211,19 +196,19 @@ DropZone.prototype.destroy = function () {
  * @returns {$}
  */
 $.fn.dropzone = function (options) {
-    var args = arguments;
+    let args = arguments;
 
-    var returnValues;
+    let returnValues;
 
     this.each(function (eachIndex) {
-        var $this = $(this)
+        let $this = $(this)
             , obj = $this.data('dropzone');
 
         if (typeof args[0] === 'string') {
             if (obj && typeof obj[args[0]] === 'function') {
 
                 // Call the method
-                var returnValue = obj[args[0]].apply(obj, Array.prototype.slice.call(args, 1));
+                let returnValue = obj[args[0]].apply(obj, Array.prototype.slice.call(args, 1));
                 if (returnValue === obj) { // If a method is chaining
                     returnValue = undefined;
                 }
@@ -242,8 +227,8 @@ $.fn.dropzone = function (options) {
         if (obj) {
             try {
                 obj.destroy();
-            } catch (e) {
-
+            } catch (ignored) {
+                // Nothing to do here
             }
         }
 
@@ -257,4 +242,4 @@ $.fn.dropzone = function (options) {
         : this;
 };
 
-export default DropZone
+export default DropZone;
