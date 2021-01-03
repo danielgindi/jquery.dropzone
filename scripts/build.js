@@ -31,6 +31,7 @@ const Path = require('path');
         dest: 'dist/jquery.dropzone.umd.js',
         sourceMap: true,
         outputFormat: 'umd',
+        outputExports: 'default',
         babelTargets: '> 0.25%, not dead',
         minified: false,
         ecmaVersion: 6,
@@ -39,6 +40,7 @@ const Path = require('path');
         dest: 'dist/jquery.dropzone.umd.min.js',
         sourceMap: true,
         outputFormat: 'umd',
+        outputExports: 'default',
         babelTargets: '> 0.25%, not dead',
         minified: true,
         ecmaVersion: 6,
@@ -47,6 +49,7 @@ const Path = require('path');
         dest: 'dist/jquery.dropzone.cjs.js',
         sourceMap: true,
         outputFormat: 'cjs',
+        outputExports: 'default',
         babelTargets: {
             node: 10,
         },
@@ -56,6 +59,7 @@ const Path = require('path');
         dest: 'dist/jquery.dropzone.cjs.min.js',
         sourceMap: true,
         outputFormat: 'cjs',
+        outputExports: 'default',
         babelTargets: {
             node: 10,
         },
@@ -144,6 +148,7 @@ const Path = require('path');
             name: task.outputName,
             sourcemap: task.sourceMap,
             format: task.outputFormat,
+            exports: task.outputExports,
             globals: {
                 jquery: 'jQuery',
             },
