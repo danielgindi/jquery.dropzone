@@ -1,7 +1,7 @@
 {
   "name": "jquery.dropzone",
   "description": "A simple jQuery plugin for creating styleable dropzones for files",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "dist/jquery.dropzone.cjs.min.js",
   "module": "dist/jquery.dropzone.es6.min.js",
   "broswer": "dist/jquery.dropzone.umd.min.js",
