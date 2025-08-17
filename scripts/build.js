@@ -13,20 +13,14 @@ const Path = require('path');
         dest: 'dist/jquery.dropzone.es6.js',
         sourceMap: true,
         outputFormat: 'esm',
-        babelTargets: {
-            node: 10,
-        },
         minified: false,
-        ecmaVersion: 6,
+        ecmaVersion: 2022,
     }, {
         dest: 'dist/jquery.dropzone.es6.min.js',
         sourceMap: true,
         outputFormat: 'esm',
-        babelTargets: {
-            node: 10,
-        },
         minified: true,
-        ecmaVersion: 6,
+        ecmaVersion: 2022,
     }, {
         dest: 'dist/jquery.dropzone.umd.js',
         sourceMap: true,
@@ -34,7 +28,7 @@ const Path = require('path');
         outputExports: 'default',
         babelTargets: '> 0.25%, not dead',
         minified: false,
-        ecmaVersion: 6,
+        ecmaVersion: 2022,
         outputName: 'DropZone',
     }, {
         dest: 'dist/jquery.dropzone.umd.min.js',
@@ -50,33 +44,29 @@ const Path = require('path');
         sourceMap: true,
         outputFormat: 'cjs',
         outputExports: 'default',
-        babelTargets: {
-            node: 10,
-        },
+        babelTargets: '> 0.25%, not dead',
         minified: false,
-        ecmaVersion: 6,
+        ecmaVersion: 2022,
     }, {
         dest: 'dist/jquery.dropzone.cjs.min.js',
         sourceMap: true,
         outputFormat: 'cjs',
         outputExports: 'default',
-        babelTargets: {
-            node: 10,
-        },
+        babelTargets: '> 0.25%, not dead',
         minified: true,
-        ecmaVersion: 6,
+        ecmaVersion: 2022,
     }];
 
-    const inputFile = 'src/index.js';
+    const inputFile = 'lib/index.js';
 
     for (let task of rollupTasks) {
         console.info('Generating ' + task.dest + '...');
 
         let plugins = [
-            require('rollup-plugin-node-resolve')({
+            require('@rollup/plugin-node-resolve').nodeResolve({
                 mainFields: ['module', 'main'],
             }),
-            require('rollup-plugin-commonjs')({}),
+            require('@rollup/plugin-commonjs')({}),
         ];
 
         const pkg = require('../package.json');
@@ -88,8 +78,8 @@ const Path = require('path');
         ].join('\n');
 
         if (task.babelTargets) {
-            plugins.push(require('rollup-plugin-babel')({
-                sourceMap: task.sourceMap ? true : false,
+            plugins.push(require('@rollup/plugin-babel').babel({
+                sourceMap: !!task.sourceMap,
                 presets: [
                     ['@babel/env', {
                         targets: task.babelTargets,
@@ -101,17 +91,19 @@ const Path = require('path');
                 minified: false,
                 comments: true,
                 retainLines: true,
+                babelHelpers: 'bundled',
                 exclude: 'node_modules/**/core-js/**/*',
             }));
         }
 
         if (task.minified) {
-            plugins.push(require('rollup-plugin-terser').terser({
+            plugins.push(require('@rollup/plugin-terser')({
                 toplevel: true,
                 compress: {
                     ecma: task.ecmaVersion,
                     passes: 2,
                 },
+                sourceMap: !!task.sourceMap,
             }));
         }
 
@@ -133,16 +125,20 @@ const Path = require('path');
         });
 
         const bundle = await Rollup.rollup({
-                preserveSymlinks: true,
-                treeshake: true,
-                onwarn(warning, warn) {
-                    if (warning.code === 'THIS_IS_UNDEFINED') return;
-                    warn(warning);
-                },
-                input: inputFile,
-                plugins: plugins,
-                external: ['jquery', 'jQuery'],
-            });
+            preserveSymlinks: true,
+            treeshake: false,
+            onwarn(warning, warn) {
+                if (warning.code === 'THIS_IS_UNDEFINED') return;
+                warn(warning);
+            },
+            input: inputFile,
+            plugins: plugins,
+            external: [
+                /^@danielgindi\/dropzone(\/|$)/,
+                'jquery',
+                'jQuery',
+            ],
+        });
 
         let generated = await bundle.generate({
             name: task.outputName,
@@ -150,6 +146,7 @@ const Path = require('path');
             format: task.outputFormat,
             exports: task.outputExports,
             globals: {
+                '@danielgindi/dropzone': 'DropZone',
                 jquery: 'jQuery',
             },
         });

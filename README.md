@@ -1,5 +1,5 @@
 # jquery.dropzone
-A simple jquery plugin for creating styleable dropzones for files
+A simple jquery plugin for creating styleable dropzones for files (now based on [@danielgindi/dropzone](https://github.com/danielgindi/dropzone.js)).
 
 * Call `$('#your-element').dropzone()` to initiate (On any element, event the `body`)
 * Adds `drop-available` class to the dropzone element when a file is being dragged to the window. This is useful if you want to style your element to show that it is possible to drop the file on it.
